@@ -8,37 +8,44 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="red"></div>
     <style>
       .container {
         border: 3px solid black;
         padding: 10px;
       }
     </style>
+    <div id="red"></div>
     <script>
+      // 1. reducer만들기
       function reducer(state, action) {
+        console.log(state, action);
+        //아직 아무것도 설정해주지않은 undefined상태이므로
+        //초기화를 위해 최초로 실행되는 reducer에 대한 호출
         if (state === undefined) {
-          //아직 아무것도 설정해주지않은 undefined상태이므로
-          //초기화를 위해 최초로 실행되는 reducer에 대한 호출
           return { color: "yellow" }; //초기값
         }
+        let newState;
+        if (action.type === "CHANGE_COLOR") {
+          newState = Object.assign({}, state, { color: "red" });
+        }
+        return newState;
       }
       let store = Redux.createStore(reducer); //redux의 store에 초기값이 지정됨
-      console.log(store.getState());
-
       function red() {
         let state = store.getState(); //getState를 이용하여 초기값을 가져옴
+        /* {state.color} = 위에서 getState를 통해 가져온 state값으로 초기컬러를 지정*/
         document.querySelector(
           "#red"
-        ).innerHTML = `<div class="container" id="component_red" style="background-color:${state.color}">
-            /* {state.color} = 위에서 getState를 통해 가져온 state값으로 초기컬러를 지정*/
-                
-                <h1>Red</h1>    
-                <input type="button" value="Change" onclick="document.querySelector('#component_red').style.backgroundColor='red'">
+        ).innerHTML = `<div class="container" id="component_red" style="background-color:${state.color}">                
+                <h1>Red</h1>
+                <input type="button" value="Change" onclick="
+                  store.dispatch({type:"CHANGE_COLOR", color:'red'});">
                 </input>
             </div>`;
       }
       red();
+      // 2. dispatch넣기 : dispatch는 reducer를 호출한다(이때 기존 state값과 action을 전달함)
+      // action = {type:"CHANGE_COLOR", color:'red'}
     </script>
   </body>
 </html>
